@@ -1,7 +1,5 @@
-
 import contacts.Contact;
 import contacts.ContactManager;
-import services.CallerIdentification;
 import services.SpamDetection;
 import users.UserManager;
 import users.UserPlan;
@@ -13,7 +11,6 @@ public class CallerApp {
         // Initialize application services
         UserManager userManager = new UserManager();
         ContactManager contactManager = new ContactManager();
-        CallerIdentification callerIdService = new CallerIdentification(contactManager);
         SpamDetection spamDetectionService = new SpamDetection(contactManager);
 
         // User registration and contact management
@@ -22,8 +19,8 @@ public class CallerApp {
         contactManager.importContacts("path/to/contacts.csv");
 
         // Blocking, unblocking, and reporting spam
-        contactManager.blockContact("1234567890");
-        contactManager.unblockContact("1234567890");
+        contactManager.blockContact("1234567890", "0987654321");
+        contactManager.unblockContact("1234567890", "0987654321");
         contactManager.reportSpam("9876543210");
 
         // Spam detection
@@ -32,7 +29,10 @@ public class CallerApp {
         }
 
         // Caller identification
-        String callerInfo = callerIdService.identifyCaller("1234567890");
+        Contact contact = contactManager.searchContactByNumber("1234567890", "0987654321");
+        String callerInfo = (contact != null) 
+            ? contact.getName() + " - " + contact.getNumber()
+            : "Unknown Caller: 0987654321";
         System.out.println("Caller Info: " + callerInfo);
 
         // Upgrade user plan
@@ -54,7 +54,7 @@ public class CallerApp {
             System.out.println("Contact not found by name.");
         }
 
-        Contact foundByNumber = contactManager.searchContactByNumber("1234567890");
+        Contact foundByNumber = contactManager.searchContactByNumber("1234567890", "0987654321");
         if (foundByNumber != null) {
             System.out.println("Found contact by number: " + foundByNumber);
         } else {
@@ -70,7 +70,6 @@ public class CallerApp {
         // Search in global directory
         System.out.println("Global Directory Search Result: " + contactManager.searchGlobalDirectory("Tech Solutions"));
 
-        System.out.println("Caller ID Service Initialized.");
         System.out.println("Spam Detection Service Initialized.");
         System.out.println("Application is now running.");
     }

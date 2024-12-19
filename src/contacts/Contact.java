@@ -3,6 +3,7 @@ package contacts;
 public class Contact {
     private String name;
     private String number;
+    //can include country code as a separate string
 
     public Contact(String name, String number) {
         this.name = name;
